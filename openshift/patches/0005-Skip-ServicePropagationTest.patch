@@ -1,0 +1,28 @@
+From 58d0b416f784263d64c55d4e0e8a7ece756c0955 Mon Sep 17 00:00:00 2001
+From: Chmouel Boudjnah <chmouel@redhat.com>
+Date: Wed, 8 Sep 2021 09:56:29 +0200
+Subject: [PATCH] Skip service account propagation test
+
+the username and password need to be in sync in gcloud which seems to be deleted
+:
+
+time="2021-09-08T07:49:03Z" level=fatal msg="Error initializing source docker://gcr.io/build-crd-testing/secret-sauce:latest: unable to retrieve auth token: invalid username/password:
+---
+ test/pipelinerun_test.go | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/test/pipelinerun_test.go b/test/pipelinerun_test.go
+index df5771f68..d8e74088d 100644
+--- a/test/pipelinerun_test.go
++++ b/test/pipelinerun_test.go
+@@ -90,6 +90,7 @@ func TestPipelineRun(t *testing.T) {
+ 	}, {
+ 		name: "service account propagation and pipeline param",
+ 		testSetup: func(ctx context.Context, t *testing.T, c *clients, namespace string, index int) {
++			t.Skip("Invalid username password has been deleted.")
+ 			t.Helper()
+ 			if _, err := c.KubeClient.CoreV1().Secrets(namespace).Create(ctx, getPipelineRunSecret(index, namespace), metav1.CreateOptions{}); err != nil {
+ 				t.Fatalf("Failed to create secret `%s`: %s", getName(secretName, index), err)
+-- 
+2.33.0
+
