@@ -49,12 +49,7 @@ func TestRealRunnerSignalForwarding(t *testing.T) {
 }
 
 func TestRealRunnerStdoutAndStderrPaths(t *testing.T) {
-	tmp, err := os.MkdirTemp("", "")
-	if err != nil {
-		t.Fatalf("Unexpected error: %v", err)
-	}
-	defer os.RemoveAll(tmp)
-
+	tmp := t.TempDir()
 	expectedString := "hello world"
 	rr := realRunner{
 		stdoutPath: filepath.Join(tmp, "stdout"),
@@ -112,13 +107,7 @@ func TestRealRunnerStdoutAndStderrPaths(t *testing.T) {
 }
 
 func TestRealRunnerStdoutAndStderrSamePath(t *testing.T) {
-	tmp, err := os.MkdirTemp("", "")
-	if err != nil {
-		t.Fatalf("Unexpected error: %v", err)
-	}
-	defer os.RemoveAll(tmp)
-
-	path := filepath.Join(tmp, "logs")
+	path := filepath.Join(t.TempDir(), "logs")
 	expectedString := "hello world"
 	rr := realRunner{
 		stdoutPath: path,
@@ -138,13 +127,7 @@ func TestRealRunnerStdoutAndStderrSamePath(t *testing.T) {
 }
 
 func TestRealRunnerStdoutPathWithSignal(t *testing.T) {
-	tmp, err := os.MkdirTemp("", "")
-	if err != nil {
-		t.Fatalf("Unexpected error: %v", err)
-	}
-	defer os.RemoveAll(tmp)
-
-	path := filepath.Join(tmp, "stdout")
+	path := filepath.Join(t.TempDir(), "stdout")
 	rr := realRunner{
 		signals:    make(chan os.Signal, 1),
 		stdoutPath: path,

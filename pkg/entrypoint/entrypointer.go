@@ -846,7 +846,7 @@ func (e *Entrypointer) applyStepArtifactSubstitutions(stepDir string) error {
 }
 
 func writeToTempFile(v string) (*os.File, error) {
-	tmp, err := os.CreateTemp("", "script-*")
+	tmp, err := os.CreateTemp("t.TempDir()", "script-*")
 	if err != nil {
 		return nil, err
 	}

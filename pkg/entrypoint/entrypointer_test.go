@@ -101,7 +101,7 @@ func TestEntrypointerFailures(t *testing.T) {
 			}
 			fpw := &fakePostWriter{}
 			terminationPath := "termination"
-			if terminationFile, err := os.CreateTemp("", "termination"); err != nil {
+			if terminationFile, err := os.CreateTemp("t.TempDir()", "termination"); err != nil {
 				t.Fatalf("unexpected error creating temporary termination file: %v", err)
 			} else {
 				terminationPath = terminationFile.Name()
@@ -191,7 +191,7 @@ func TestEntrypointer(t *testing.T) {
 			fw, fr, fpw := &fakeWaiter{}, &fakeRunner{}, &fakePostWriter{}
 			timeout := time.Duration(0)
 			terminationPath := "termination"
-			if terminationFile, err := os.CreateTemp("", "termination"); err != nil {
+			if terminationFile, err := os.CreateTemp("t.TempDir()", "termination"); err != nil {
 				t.Fatalf("unexpected error creating temporary termination file: %v", err)
 			} else {
 				terminationPath = terminationFile.Name()
@@ -296,7 +296,7 @@ func TestCheckForBreakpointOnFailure(t *testing.T) {
 	}
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			tmp, err := os.CreateTemp("", "1*.breakpoint")
+			tmp, err := os.CreateTemp("t.TempDir()", "1*.breakpoint")
 			if err != nil {
 				t.Fatalf("error while creating temp file for testing exit code written by breakpoint")
 			}
@@ -305,7 +305,7 @@ func TestCheckForBreakpointOnFailure(t *testing.T) {
 				t.Fatalf("failed to create breakpoint waiting file, err: %v", err)
 			}
 			// write exit code to file
-			if err = os.WriteFile(breakpointFile.Name(), []byte("0"), 0700); err != nil {
+			if err = os.WriteFile(breakpointFile.Name(), []byte("0"), 0o700); err != nil {
 				t.Fatalf("failed writing to temp file create temp file for testing exit code written by breakpoint, err: %v", err)
 			}
 			e := Entrypointer{
@@ -408,7 +408,7 @@ func TestReadResultsFromDisk(t *testing.T) {
 		t.Run(c.desc, func(t *testing.T) {
 			ctx := context.Background()
 			terminationPath := "termination"
-			if terminationFile, err := os.CreateTemp("", "termination"); err != nil {
+			if terminationFile, err := os.CreateTemp("t.TempDir()", "termination"); err != nil {
 				t.Fatalf("unexpected error creating temporary termination file: %v", err)
 			} else {
 				terminationPath = terminationFile.Name()
@@ -416,7 +416,7 @@ func TestReadResultsFromDisk(t *testing.T) {
 			}
 			resultsFilePath := []string{}
 			for i, r := range c.results {
-				if resultsFile, err := os.CreateTemp("", r); err != nil {
+				if resultsFile, err := os.CreateTemp("t.TempDir()", r); err != nil {
 					t.Fatalf("unexpected error creating temporary termination file: %v", err)
 				} else {
 					resultName := resultsFile.Name()
@@ -462,7 +462,7 @@ func TestReadResultsFromDisk(t *testing.T) {
 func TestEntrypointer_ReadBreakpointExitCodeFromDisk(t *testing.T) {
 	expectedExitCode := 1
 	// setup test
-	tmp, err := os.CreateTemp("", "1*.err")
+	tmp, err := os.CreateTemp("t.TempDir()", "1*.err")
 	if err != nil {
 		t.Errorf("error while creating temp file for testing exit code written by breakpoint")
 	}
@@ -519,7 +519,7 @@ func TestEntrypointer_OnError(t *testing.T) {
 		t.Run(c.desc, func(t *testing.T) {
 			fpw := &fakePostWriter{}
 			terminationPath := "termination"
-			if terminationFile, err := os.CreateTemp("", "termination"); err != nil {
+			if terminationFile, err := os.CreateTemp("t.TempDir()", "termination"); err != nil {
 				t.Fatalf("unexpected error creating temporary termination file: %v", err)
 			} else {
 				terminationPath = terminationFile.Name()
@@ -658,7 +658,7 @@ func TestEntrypointerResults(t *testing.T) {
 			var fr Runner = &fakeRunner{}
 			timeout := time.Duration(0)
 			terminationPath := "termination"
-			if terminationFile, err := os.CreateTemp("", "termination"); err != nil {
+			if terminationFile, err := os.CreateTemp("t.TempDir()", "termination"); err != nil {
 				t.Fatalf("unexpected error creating temporary termination file: %v", err)
 			} else {
 				terminationPath = terminationFile.Name()
@@ -807,7 +807,7 @@ func TestEntrypointerStopOnCancel(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			terminationPath := "termination"
-			if terminationFile, err := os.CreateTemp("", "termination"); err != nil {
+			if terminationFile, err := os.CreateTemp("t.TempDir()", "termination"); err != nil {
 				t.Fatalf("unexpected error creating temporary termination file: %v", err)
 			} else {
 				terminationPath = terminationFile.Name()
@@ -1068,12 +1068,12 @@ func TestApplyStepWhenSubstitutions_Input(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			resultPath := filepath.Join(stepDir, pod.GetContainerName(tc.stepName), "results")
-			err := os.MkdirAll(resultPath, 0750)
+			err := os.MkdirAll(resultPath, 0o750)
 			if err != nil {
 				log.Fatal(err)
 			}
 			resultFile := filepath.Join(resultPath, tc.resultName)
-			err = os.WriteFile(resultFile, []byte(tc.result), 0666)
+			err = os.WriteFile(resultFile, []byte(tc.result), 0o666)
 			if err != nil {
 				log.Fatal(err)
 			}
@@ -1141,12 +1141,12 @@ func TestApplyStepWhenSubstitutions_CEL(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			resultPath := filepath.Join(stepDir, pod.GetContainerName(tc.stepName), "results")
-			err := os.MkdirAll(resultPath, 0750)
+			err := os.MkdirAll(resultPath, 0o750)
 			if err != nil {
 				log.Fatal(err)
 			}
 			resultFile := filepath.Join(resultPath, tc.resultName)
-			err = os.WriteFile(resultFile, []byte(tc.result), 0666)
+			err = os.WriteFile(resultFile, []byte(tc.result), 0o666)
 			if err != nil {
 				log.Fatal(err)
 			}
@@ -1177,31 +1177,34 @@ func TestApplyStepWhenSubstitutions_Values(t *testing.T) {
 		want       v1.StepWhenExpressions
 		when       v1.StepWhenExpressions
 		wantErr    bool
-	}{{
-		name:       "string param",
-		stepName:   "foo",
-		resultName: "res",
-		result:     "Hello",
-		when:       v1.StepWhenExpressions{{Values: []string{"$(steps.foo.results.res)"}}},
-		want:       v1.StepWhenExpressions{{Values: []string{"Hello"}}},
-		wantErr:    false,
-	}, {
-		name:       "array param, reference an element",
-		stepName:   "foo",
-		resultName: "res",
-		result:     "[\"Hello\",\"World\"]",
-		when:       v1.StepWhenExpressions{{Values: []string{"$(steps.foo.results.res[1])"}}},
-		want:       v1.StepWhenExpressions{{Values: []string{"World"}}},
-		wantErr:    false,
-	}, {
-		name:       "array param, reference whole array",
-		stepName:   "foo",
-		resultName: "res",
-		result:     "[\"Hello\",\"World\"]",
-		when:       v1.StepWhenExpressions{{Values: []string{"$(steps.foo.results.res[*])"}}},
-		want:       v1.StepWhenExpressions{{Values: []string{"Hello", "World"}}},
-		wantErr:    false,
-	},
+	}{
+		{
+			name:       "string param",
+			stepName:   "foo",
+			resultName: "res",
+			result:     "Hello",
+			when:       v1.StepWhenExpressions{{Values: []string{"$(steps.foo.results.res)"}}},
+			want:       v1.StepWhenExpressions{{Values: []string{"Hello"}}},
+			wantErr:    false,
+		},
+		{
+			name:       "array param, reference an element",
+			stepName:   "foo",
+			resultName: "res",
+			result:     "[\"Hello\",\"World\"]",
+			when:       v1.StepWhenExpressions{{Values: []string{"$(steps.foo.results.res[1])"}}},
+			want:       v1.StepWhenExpressions{{Values: []string{"World"}}},
+			wantErr:    false,
+		},
+		{
+			name:       "array param, reference whole array",
+			stepName:   "foo",
+			resultName: "res",
+			result:     "[\"Hello\",\"World\"]",
+			when:       v1.StepWhenExpressions{{Values: []string{"$(steps.foo.results.res[*])"}}},
+			want:       v1.StepWhenExpressions{{Values: []string{"Hello", "World"}}},
+			wantErr:    false,
+		},
 		{
 			name:       "array param, reference whole array with concatenation, error",
 			stepName:   "foo",
@@ -1219,7 +1222,8 @@ func TestApplyStepWhenSubstitutions_Values(t *testing.T) {
 			when:       v1.StepWhenExpressions{{Values: []string{"$(steps.foo.results.res.hello)"}}},
 			want:       v1.StepWhenExpressions{{Values: []string{"World"}}},
 			wantErr:    false,
-		}, {
+		},
+		{
 			name:       "bad-result-format",
 			stepName:   "foo",
 			resultName: "res",
@@ -1227,17 +1231,18 @@ func TestApplyStepWhenSubstitutions_Values(t *testing.T) {
 			when:       v1.StepWhenExpressions{{Values: []string{"$(steps.foo.results.res.hello.bar)"}}},
 			want:       v1.StepWhenExpressions{{Values: []string{"$(steps.foo.results.res.hello.bar)"}}},
 			wantErr:    true,
-		}}
+		},
+	}
 	stepDir := createTmpDir(t, "when-values")
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			resultPath := filepath.Join(stepDir, pod.GetContainerName(tc.stepName), "results")
-			err := os.MkdirAll(resultPath, 0750)
+			err := os.MkdirAll(resultPath, 0o750)
 			if err != nil {
 				log.Fatal(err)
 			}
 			resultFile := filepath.Join(resultPath, tc.resultName)
-			err = os.WriteFile(resultFile, []byte(tc.result), 0666)
+			err = os.WriteFile(resultFile, []byte(tc.result), 0o666)
 			if err != nil {
 				log.Fatal(err)
 			}
@@ -1265,71 +1270,77 @@ func TestAllowExec(t *testing.T) {
 		whenExpressions v1.StepWhenExpressions
 		expected        bool
 		wantErr         bool
-	}{{
-		name: "in expression",
-		whenExpressions: v1.StepWhenExpressions{
-			{
-				Input:    "foo",
-				Operator: selection.In,
-				Values:   []string{"foo", "bar"},
+	}{
+		{
+			name: "in expression",
+			whenExpressions: v1.StepWhenExpressions{
+				{
+					Input:    "foo",
+					Operator: selection.In,
+					Values:   []string{"foo", "bar"},
+				},
 			},
+			expected: true,
 		},
-		expected: true,
-	}, {
-		name: "notin expression",
-		whenExpressions: v1.StepWhenExpressions{
-			{
-				Input:    "foobar",
-				Operator: selection.NotIn,
-				Values:   []string{"foobar"},
+		{
+			name: "notin expression",
+			whenExpressions: v1.StepWhenExpressions{
+				{
+					Input:    "foobar",
+					Operator: selection.NotIn,
+					Values:   []string{"foobar"},
+				},
 			},
+			expected: false,
 		},
-		expected: false,
-	}, {
-		name: "multiple expressions - false",
-		whenExpressions: v1.StepWhenExpressions{
-			{
-				Input:    "foobar",
-				Operator: selection.In,
-				Values:   []string{"foobar"},
-			}, {
-				Input:    "foo",
-				Operator: selection.In,
-				Values:   []string{"bar"},
+		{
+			name: "multiple expressions - false",
+			whenExpressions: v1.StepWhenExpressions{
+				{
+					Input:    "foobar",
+					Operator: selection.In,
+					Values:   []string{"foobar"},
+				}, {
+					Input:    "foo",
+					Operator: selection.In,
+					Values:   []string{"bar"},
+				},
 			},
+			expected: false,
 		},
-		expected: false,
-	}, {
-		name: "multiple expressions - true",
-		whenExpressions: v1.StepWhenExpressions{
-			{
-				Input:    "foobar",
-				Operator: selection.In,
-				Values:   []string{"foobar"},
-			}, {
-				Input:    "foo",
-				Operator: selection.NotIn,
-				Values:   []string{"bar"},
+		{
+			name: "multiple expressions - true",
+			whenExpressions: v1.StepWhenExpressions{
+				{
+					Input:    "foobar",
+					Operator: selection.In,
+					Values:   []string{"foobar"},
+				}, {
+					Input:    "foo",
+					Operator: selection.NotIn,
+					Values:   []string{"bar"},
+				},
 			},
+			expected: true,
 		},
-		expected: true,
-	}, {
-		name: "CEL is true",
-		whenExpressions: v1.StepWhenExpressions{
-			{
-				CEL: "'foo'=='foo'",
+		{
+			name: "CEL is true",
+			whenExpressions: v1.StepWhenExpressions{
+				{
+					CEL: "'foo'=='foo'",
+				},
 			},
+			expected: true,
 		},
-		expected: true,
-	}, {
-		name: "CEL is false",
-		whenExpressions: v1.StepWhenExpressions{
-			{
-				CEL: "'foo'!='foo'",
+		{
+			name: "CEL is false",
+			whenExpressions: v1.StepWhenExpressions{
+				{
+					CEL: "'foo'!='foo'",
+				},
 			},
+			expected: false,
 		},
-		expected: false,
-	},
 		{
 			name: "multiple expressions - 1. CEL is true 2. In Op is false, expect false",
 			whenExpressions: v1.StepWhenExpressions{
@@ -1393,6 +1404,7 @@ func TestAllowExec(t *testing.T) {
 		})
 	}
 }
+
 func TestIsContextDeadlineError(t *testing.T) {
 	ctxErr := ContextError(context.DeadlineExceeded.Error())
 	if !IsContextDeadlineError(ctxErr) {
@@ -1526,14 +1538,7 @@ func TestTerminationReason(t *testing.T) {
 		t.Run(test.desc, func(t *testing.T) {
 			fw, fr, fpw := &fakeWaiter{skipStep: true}, &fakeRunner{runError: test.runError}, &fakePostWriter{}
 
-			tmpFolder, err := os.MkdirTemp("", "")
-			if err != nil {
-				t.Fatalf("unexpected error creating temporary folder: %v", err)
-			} else {
-				defer os.RemoveAll(tmpFolder)
-			}
-
-			terminationFile, err := os.CreateTemp(tmpFolder, "termination")
+			terminationFile, err := os.CreateTemp(t.TempDir(), "termination")
 			if err != nil {
 				t.Fatalf("unexpected error creating termination file: %v", err)
 			}
@@ -1547,7 +1552,7 @@ func TestTerminationReason(t *testing.T) {
 				PostWriter:          fpw,
 				TerminationPath:     terminationFile.Name(),
 				BreakpointOnFailure: false,
-				StepMetadataDir:     tmpFolder,
+				StepMetadataDir:     t.TempDir(),
 				OnError:             test.onError,
 				StepWhenExpressions: test.when,
 			}
@@ -1583,7 +1588,6 @@ func TestReadArtifactsFileDoesNotExist(t *testing.T) {
 		dir := createTmpDir(t, "")
 		fp := filepath.Join(dir, "provenance.json")
 		got, err := readArtifacts(fp, result.StepArtifactsResultType)
-
 		if err != nil {
 			t.Fatalf("Did not expect and error but got: %v", err)
 		}
@@ -1604,7 +1608,6 @@ func TestReadArtifactsFileExistNoError(t *testing.T) {
 			t.Fatalf("Did not expect and error but got: %v", err)
 		}
 		got, err := readArtifacts(fp, result.StepArtifactsResultType)
-
 		if err != nil {
 			t.Fatalf("Did not expect and error but got: %v", err)
 		}
@@ -2279,11 +2282,7 @@ func (f *fakeResultsWriter) Run(ctx context.Context, args ...string) error {
 
 func createTmpDir(t *testing.T, name string) string {
 	t.Helper()
-	tmpDir, err := os.MkdirTemp("", name)
-	if err != nil {
-		t.Fatalf("unexpected error creating temporary dir: %v", err)
-	}
-	return tmpDir
+	return t.TempDir()
 }
 
 func getMockSpireClient(ctx context.Context) (spire.EntrypointerAPIClient, spire.ControllerAPIClient, *v1beta1.TaskRun) {
